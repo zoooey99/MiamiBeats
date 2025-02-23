@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocation } from '../../hooks/useLocation';
+import {getNearbyPlaces } from '../../services/GoogleMapsService'
+import {useOpenAi} from '../../services/OpenAIService'
 
 const MIAMI_REGION = {
   latitude: 25.7617,
@@ -28,9 +32,39 @@ const NEIGHBORHOODS = [
   },
 ];
 
+
 export default function MapScreen() {
   const [selectedArea, setSelectedArea] = useState(NEIGHBORHOODS[0]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const { location, errorMsg, fetchLocation } = useLocation();
+  const [nearbyPlaces, setNearbyPlaces] = useState([]);
+  async function getMusic() {
+    fetchLocation();
+    if (location?.latitude && location?.longitude) {
+      const places = await getNearbyPlaces(location.latitude, location.longitude);   
+      useOpenAi(places);
+    }
+  }
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (isPlaying) {
+      // Initial location check
+      getMusic();
+      
+      // Set up interval for location updates
+      intervalId = setInterval(() => {
+        //getMusic();
+      }, 5000);
+    }
+
+    // Cleanup interval when component unmounts or isPlaying changes
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isPlaying, fetchLocation]);
 
   return (
     <View style={styles.container}>
