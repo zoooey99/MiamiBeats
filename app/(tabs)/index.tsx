@@ -57,7 +57,7 @@ export default function MapScreen() {
         <View style={styles.musicPlayer}>
           <View style={styles.trackInfo}>
             <Text style={styles.trackTitle}>AI Generated {selectedArea.genre}</Text>
-            <Text style={styles.trackArtist}>CultureBeats AI</Text>
+            <Text style={styles.trackArtist}>Miami Beats AI</Text>
           </View>
 
           <View style={styles.controls}>

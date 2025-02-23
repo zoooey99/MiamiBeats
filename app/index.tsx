@@ -26,8 +26,8 @@ export default function SplashScreen() {
       style={styles.container}
     >
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        <Text style={styles.logo}>CB</Text>
-        <Text style={styles.title}>CultureBeats</Text>
+        <Text style={styles.logo}>MB</Text>
+        <Text style={styles.title}>Miami Beats</Text>
         <Text style={styles.loading}>Loading...</Text>
       </Animated.View>
     </LinearGradient>
