@@ -1,7 +1,8 @@
 import axios from 'axios';
+import config from '../config';
 
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY';
-const OPENAI_ENDPOINT = 'https://api.openai.com/v1/completions';
+const OPENAI_API_KEY = config.openaiApiKey;
+const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 interface LocationInfo {
   location: {
@@ -37,15 +38,26 @@ export async function useOpenAi(locations: LocationInfo[]) {
   The music description should include key instruments, rhythms, and stylistic elements associated with each culture.
   The output must be formatted in JSON for direct API use.
   
-  Here are the 20 locations: (${locations.map((loc) => loc.type).join(', ')})
+  Here are the 20 locations: (${locationList})
   `;
 
   try {
+    console.log(OPENAI_API_KEY);
     const response = await axios.post(
       OPENAI_ENDPOINT,
       {
         model: 'gpt-4',
-        prompt,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are an expert in cultural analysis and AI music composition.',
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
         max_tokens: 200,
         temperature: 0.7,
       },
@@ -56,8 +68,8 @@ export async function useOpenAi(locations: LocationInfo[]) {
         },
       }
     );
-
-    return response.data.choices[0].text;
+    console.log(response.data.choices[0].message.content);
+    return response.data.choices[0].message.content;
   } catch (error) {
     console.error('Error generating music description:', error);
     return null;
